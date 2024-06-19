@@ -50,6 +50,40 @@ describe('Given i am connected as an employee', () => {
       expect(handleChange).toHaveBeenCalled();
       // Vérification que la fonction handleChange a bien été appelée.
     });
+
+    test('That handleClickDashboardBills() function is callable when icon-window is clicked', () => {
+      // Test pour vérifier que la fonction handleClickDashboardBills() est appelée lorsque l'élément avec data-testid="icon-window" est cliqué.
+
+      Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+      // Redéfinition de la propriété 'localStorage' de l'objet 'window' avec la simulation de localStorage.
+
+      window.localStorage.setItem('user', JSON.stringify({ type: 'Employee' }));
+      // Simulation de la connexion de l'utilisateur en tant qu'employé en définissant un objet utilisateur dans le localStorage.
+
+      document.body.innerHTML = NewBillUI();
+      // Insertion de l'interface utilisateur de la nouvelle note de frais dans le body du document.
+
+      const onNavigate = jest.fn();
+      // Création d'une fonction factice (mock) pour onNavigate.
+
+      const newBillObjet = new NewBill({ document, onNavigate, store: {}, localStorage: {} });
+      // Création d'une instance du composant NewBill avec les paramètres requis.
+
+      const handleClickDashboardBills = jest.spyOn(newBillObjet, 'handleClickDashboardBills');
+      // Espionne la méthode handleClickDashboardBills du composant.
+
+      const iconWindow = screen.getByTestId('icon-window');
+      // Récupération de l'élément icon-window par son attribut data-testid.
+
+      iconWindow.addEventListener('click', newBillObjet.handleClickDashboardBills);
+      // Ajout d'un écouteur d'événement 'click' sur l'élément icon-window qui utilise la méthode handleClickDashboardBills du composant.
+
+      fireEvent.click(iconWindow);
+      // Simulation d'un événement 'click' sur l'élément icon-window.
+
+      expect(handleClickDashboardBills).toHaveBeenCalled();
+      // Vérification que la méthode handleClickDashboardBills a bien été appelée.
+    });
   });
 
   describe('When i am on new bill page, i do fill fields in correct format and i click submit button', () => {
