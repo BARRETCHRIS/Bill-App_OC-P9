@@ -21,6 +21,7 @@ const login = async (req, res) => {
     return res.status(500).send({ message: err.message });
   }
 };
+
 const loggout = async (req, res) => {
   const { user } = req;
   try {

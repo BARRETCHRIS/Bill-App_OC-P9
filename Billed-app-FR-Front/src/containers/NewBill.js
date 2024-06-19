@@ -13,7 +13,17 @@ export default class NewBill {
     this.fileUrl = null;
     this.fileName = null;
     this.billId = null;
+
+    // add clik on button icon-window in aside-nav bar for employee account
+    const asideBtnDashBBills = document.querySelector(`div[data-testid="icon-window"]`);
+    console.log(asideBtnDashBBills);
+    if (asideBtnDashBBills) asideBtnDashBBills.addEventListener('click', this.handleClickDashboardBills);
+
     new Logout({ document, localStorage, onNavigate });
+  }
+
+  handleClickDashboardBills = () => {
+    this.onNavigate(ROUTES_PATH["Bills"]);
   }
 
   // Fix error message and blocks entries by extension 
