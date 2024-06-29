@@ -8,7 +8,7 @@ import { bills } from "../fixtures/bills.js"
 import Bills from "../containers/Bills.js";
 import { ROUTES_PATH, ROUTES} from "../constants/routes.js";
 import {localStorageMock} from "../__mocks__/localStorage.js";
-import mockStore from "../__mocks__/store"
+import mockStore from "../__mocks__/store.js"
 import router from "../app/Router.js";
 import BillsUI from "../views/BillsUI.js";
 jest.mock("../app/store", () => mockStore)
@@ -56,8 +56,8 @@ describe("Given I am connected as an employee", () => {
       // Vérification que l'élément icône de la fenêtre est présent dans le DOM.
     })
 
-    test("Then bills should be ordered from earliest to latest", () => {
-      // Test pour vérifier que les factures sont triées de la plus ancienne à la plus récente.
+    test("Then bills should be ordered from latest to earliest", () => {
+      // Test pour vérifier que les factures sont triées de la plus récente à la plus ancienne.
 
       const billsSorted = [...bills].sort((a, b) => {
         return new Date(a.date) < new Date(b.date) ? 1 : -1;
