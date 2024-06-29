@@ -14,103 +14,74 @@ import router from "../app/Router";
 // une simulation de localStorage (localStorageMock), des outils pour simuler des événements (fireEvent) et interroger le DOM (screen),
 // les constantes de routes (ROUTES) et le routeur (router).
 
-describe('Given i am connected as an employee', () => {
+describe('Given I am connected as an employee', () => {
   // Début d'une suite de tests qui vérifie le comportement lorsque l'utilisateur est connecté en tant qu'employé.
 
-  describe('When i am on new bill page', () => {
+  describe('When I am on new bill page', () => {
     // Sous-suite de tests qui vérifie le comportement lorsque l'utilisateur est sur la page de création de nouvelles notes de frais.
 
-    test('That handleChangeFile() function is callable when change event is triggered', () => {
-      // Test pour vérifier que la fonction handleChangeFile() est appelée lorsque l'événement 'change' est déclenché sur l'élément input de fichier.
-
+    beforeEach(() => {
+      // Configuration commune à tous les tests de cette suite
       Object.defineProperty(window, 'localStorage', { value: localStorageMock });
-      // Redéfinition de la propriété 'localStorage' de l'objet 'window' avec la simulation de localStorage.
-
       window.localStorage.setItem('user', JSON.stringify({ type: 'Employee' }));
-      // Simulation de la connexion de l'utilisateur en tant qu'employé en définissant un objet utilisateur dans le localStorage.
-
       document.body.innerHTML = NewBillUI();
-      // Insertion de l'interface utilisateur de la nouvelle note de frais dans le body du document.
-
-      const newBillObjet = new NewBill({ document, onNavigate: {}, store: {}, localStorage: {} });
-      // Création d'une instance du composant NewBill avec les paramètres requis.
-
-      const handleChange = jest.fn((e) => newBillObjet.handleChangeFile(e));
-      // Création d'une fonction factice (mock) pour handleChange qui appelle la méthode handleChangeFile du composant.
-
-      const inputFile = screen.getByTestId('file');
-      // Récupération de l'élément input de fichier par son attribut data-testid.
-
-      inputFile.addEventListener('change', handleChange);
-      // Ajout d'un écouteur d'événement 'change' sur l'input de fichier qui utilise la fonction factice handleChange.
-
-      fireEvent.change(inputFile);
-      // Simulation d'un événement 'change' sur l'input de fichier.
-
-      expect(handleChange).toHaveBeenCalled();
-      // Vérification que la fonction handleChange a bien été appelée.
     });
 
-    test('That handleClickDashboardBills() function is callable when icon-window is clicked', () => {
+    test('handleChangeFile() should be called when file input changes', () => {
+      // Test pour vérifier que la fonction handleChangeFile() est appelée lorsque l'événement 'change' est déclenché sur l'élément input de fichier.
+
+      const newBillObject = new NewBill({ document, onNavigate: {}, store: {}, localStorage: {} });
+      const handleChange = jest.fn(newBillObject.handleChangeFile);
+      const inputFile = screen.getByTestId('file');
+
+      inputFile.addEventListener('change', handleChange);
+
+      // Simulation d'un changement de fichier
+      fireEvent.change(inputFile);
+
+      // Vérification que handleChangeFile a été appelée
+      expect(handleChange).toHaveBeenCalled();
+    });
+
+    test('handleClickDashboardBills() should be called when dashboard icon is clicked', () => {
       // Test pour vérifier que la fonction handleClickDashboardBills() est appelée lorsque l'élément avec data-testid="icon-window" est cliqué.
 
-      Object.defineProperty(window, 'localStorage', { value: localStorageMock });
-      // Redéfinition de la propriété 'localStorage' de l'objet 'window' avec la simulation de localStorage.
-
-      window.localStorage.setItem('user', JSON.stringify({ type: 'Employee' }));
-      // Simulation de la connexion de l'utilisateur en tant qu'employé en définissant un objet utilisateur dans le localStorage.
-
-      document.body.innerHTML = NewBillUI();
-      // Insertion de l'interface utilisateur de la nouvelle note de frais dans le body du document.
-
       const onNavigate = jest.fn();
-      // Création d'une fonction factice (mock) pour onNavigate.
-
-      const newBillObjet = new NewBill({ document, onNavigate, store: {}, localStorage: {} });
-      // Création d'une instance du composant NewBill avec les paramètres requis.
-
-      const handleClickDashboardBills = jest.spyOn(newBillObjet, 'handleClickDashboardBills');
-      // Espionne la méthode handleClickDashboardBills du composant.
-
+      const newBillObject = new NewBill({ document, onNavigate, store: {}, localStorage: {} });
+      const handleClickDashboardBills = jest.spyOn(newBillObject, 'handleClickDashboardBills');
       const iconWindow = screen.getByTestId('icon-window');
-      // Récupération de l'élément icon-window par son attribut data-testid.
 
-      iconWindow.addEventListener('click', newBillObjet.handleClickDashboardBills);
-      // Ajout d'un écouteur d'événement 'click' sur l'élément icon-window qui utilise la méthode handleClickDashboardBills du composant.
+      iconWindow.addEventListener('click', newBillObject.handleClickDashboardBills);
 
+      // Simulation d'un clic sur l'icône du tableau de bord
       fireEvent.click(iconWindow);
-      // Simulation d'un événement 'click' sur l'élément icon-window.
 
+      // Vérification que handleClickDashboardBills a été appelée
       expect(handleClickDashboardBills).toHaveBeenCalled();
-      // Vérification que la méthode handleClickDashboardBills a bien été appelée.
     });
   });
 
-  describe('When i am on new bill page, i do fill fields in correct format and i click submit button', () => {
+  describe('When I am on new bill page, fill fields correctly, and click submit', () => {
     // Sous-suite de tests qui vérifie le comportement lorsque les champs sont correctement remplis et que le bouton de soumission est cliqué.
 
-    test('POST new bill', () => {
-      // Test pour vérifier que la soumission d'une nouvelle note de frais fonctionne correctement.
-
+    beforeEach(() => {
+      // Configuration commune à tous les tests de cette suite
       Object.defineProperty(window, 'localStorage', { value: localStorageMock });
-      // Redéfinition de la propriété 'localStorage' de l'objet 'window' avec la simulation de localStorage.
-
       window.localStorage.setItem('user', JSON.stringify({ type: 'Employee' }));
-      // Simulation de la connexion de l'utilisateur en tant qu'employé en définissant un objet utilisateur dans le localStorage.
-
       document.body.innerHTML = NewBillUI();
-      // Insertion de l'interface utilisateur de la nouvelle note de frais dans le body du document.
+    });
+
+    test('should submit the form and navigate to Bills page', () => {
+      // Test pour vérifier que la soumission d'une nouvelle note de frais fonctionne correctement.
 
       const onNavigate = (pathname) => {
         document.body.innerHTML = ROUTES({ pathname });
       };
-      // Définition d'une fonction onNavigate qui met à jour le contenu du body du document en fonction du chemin de la route.
 
       const root = document.createElement("div");
       root.setAttribute("id", "root");
       document.body.append(root);
       router();
-      // Création et ajout d'un élément div avec l'id "root" au body, puis initialisation du routeur.
 
       const storeMock = {
         bills: () => {
@@ -125,32 +96,67 @@ describe('Given i am connected as an employee', () => {
           };
         },
       };
-      // Simulation de l'objet store avec une méthode bills qui renvoie un objet avec une méthode update,
-      // qui à son tour renvoie un objet avec une méthode then et une méthode catch vide.
 
-      const newBillObjet = new NewBill({ document, onNavigate, store: storeMock, localStorage: window.localStorage });
-      // Création d'une instance du composant NewBill avec les paramètres requis, y compris la simulation de store.
-
+      const newBillObject = new NewBill({ document, onNavigate, store: storeMock, localStorage: window.localStorage });
       const form = screen.getByTestId("form-new-bill");
-      // Récupération de l'élément formulaire par son attribut data-testid.
-
-      const handleSubmit = jest.fn((e) => newBillObjet.handleSubmit(e));
-      // Création d'une fonction factice (mock) pour handleSubmit qui appelle la méthode handleSubmit du composant.
+      const handleSubmit = jest.fn(newBillObject.handleSubmit);
 
       form.addEventListener("submit", handleSubmit);
-      // Ajout d'un écouteur d'événement 'submit' sur le formulaire qui utilise la fonction factice handleSubmit.
 
+      // Simulation de la soumission du formulaire
       fireEvent.submit(form);
-      // Simulation d'un événement 'submit' sur le formulaire.
 
+      // Vérification que handleSubmit a bien été appelée
       expect(handleSubmit).toHaveBeenCalled();
-      // Vérification que la fonction handleSubmit a bien été appelée.
 
+      // Vérification que l'utilisateur est redirigé vers la page des notes de frais
       const titleBills = screen.queryByText("Mes notes de frais");
-      // Recherche d'un élément avec le texte "Mes notes de frais" dans le DOM.
-
       expect(titleBills).toBeTruthy();
-      // Vérification que l'élément avec le texte "Mes notes de frais" est présent dans le DOM.
+    });
+
+    test('handleSubmit should return a non-empty object', () => {
+      // Test pour vérifier que handleSubmit renvoie un objet non vide.
+
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname });
+      };
+
+      const root = document.createElement("div");
+      root.setAttribute("id", "root");
+      document.body.append(root);
+      router();
+
+      const storeMock = {
+        bills: () => {
+          return {
+            update: function(bill) {
+              return {
+                then: function (fn) {
+                  return { catch: () => {} };
+                }
+              };
+            }
+          };
+        },
+      };
+
+      const newBillObject = new NewBill({ document, onNavigate, store: storeMock, localStorage: window.localStorage });
+      const form = screen.getByTestId("form-new-bill");
+
+      const handleSubmit = jest.fn((e) => {
+        e.preventDefault();
+        const bill = newBillObject.handleSubmit(e);
+        expect(bill).not.toEqual({});
+        return bill;
+      });
+
+      form.addEventListener("submit", handleSubmit);
+
+      // Simulation de la soumission du formulaire
+      fireEvent.submit(form);
+
+      // Vérification que handleSubmit a bien été appelée
+      expect(handleSubmit).toHaveBeenCalled();
     });
   });
 });
